@@ -72,12 +72,12 @@ class GitHubChatGPTPullRequestReviewer:
         openai.api_key = openai_api_key
 
         self.chatgpt_initial_instruction = f"""
-            {self.openai_prompt}
-            {self.openai_default_criteria}
+            {self.openai_prompt.strip()}
+            {self.openai_default_criteria.strip()}
             {self._prepare_criteria_string(self.openai_default_criteria)}
             {self._prepare_criteria_string(self.openai_extra_criteria)}
 
-            {self.openai_prompt_footer}
+            {self.openai_prompt_footer.strip()}
         """.strip()
 
     def _prepare_criteria_string(self, criteria_string: str):
@@ -151,6 +151,7 @@ class GitHubChatGPTPullRequestReviewer:
                 "Estimated number of tokens: ",
                 len(self.chatgpt_initial_instruction + message_diff) / 4
             )
+            print("Prompt: ", self.chatgpt_initial_instruction)
 
             try:
                 # create a chat completion
