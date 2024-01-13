@@ -18,8 +18,28 @@ inputs:
     description: 'The maximum number of tokens to generate in the completion.'
     required: false
     default: '2048'
+  openai_default_criteria:
+    description: 'Override the default criteria for the PR reviewer. Split your criteria with `;`'
+    required: false
+    default: ''
   openai_extra_criteria:
     description: 'Add extra criteria for the PR reviewer. Split your criteria with `;`'
+    required: false
+    default: ''
+  openai_prompt:
+    description: 'Override the prompt for the PR reviewer.`'
+    required: false
+    default: ''
+  openai_prompt_footer:
+    description: 'Override the prompt footer for the PR reviewer.`'
+    required: false
+    default: ''
+  comment_title:
+    description: 'Override the comment title for the PR reviewer.`'
+    required: false
+    default: ''
+  comment_note:
+    description: 'Override the comment note for the PR reviewer.`'
     required: false
     default: ''
   github_token:
@@ -43,6 +63,11 @@ runs:
     - ${{ inputs.openai_model }}
     - ${{ inputs.openai_temperature }}
     - ${{ inputs.openai_max_tokens }}
+    - ${{ inputs.openai_default_criteria }}
     - ${{ inputs.openai_extra_criteria }}
+    - ${{ inputs.openai_prompt }}
+    - ${{ inputs.openai_prompt_footer }}
+    - ${{ inputs.comment_title }}
+    - ${{ inputs.comment_note }}
     - ${{ inputs.github_token }}
     - ${{ inputs.github_pr_id }}

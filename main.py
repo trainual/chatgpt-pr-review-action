@@ -33,14 +33,14 @@ class GitHubChatGPTPullRequestReviewer:
         openai_max_tokens_default = 2048
         openai_extra_criteria_default = ""
         openai_default_criteria_default = f"""
-            - best practice that would improve the changes
-            - code style formatting
-            - recommendation specific for that programming language
-            - performance improvement
-            - improvements from the software engineering perspective
-            - docstrings, when it applies
+            - best practice that would improve the changes;
+            - code style formatting;
+            - recommendation specific for that programming language;
+            - performance improvement;
+            - improvements from the software engineering perspective;
+            - docstrings, when it applies;
             - prefer explicit than implicit, for example, in python, avoid
-              importing using `*`, because we don't know what is being imported
+              importing using `*`, because we don't know what is being imported;
         """
         openai_prompt_default = f"""
             You are a GitHub PR reviewer bot, so you will receive a text that
@@ -74,14 +74,15 @@ class GitHubChatGPTPullRequestReviewer:
         self.chatgpt_initial_instruction = f"""
             {self.openai_prompt}
             {self.openai_default_criteria}
-            {self._prepare_extra_criteria(self.openai_extra_criteria)}
+            {self._prepare_criteria_string(self.openai_default_criteria)}
+            {self._prepare_criteria_string(self.openai_extra_criteria)}
 
             {self.openai_prompt_footer}
         """.strip()
 
-    def _prepare_extra_criteria(self, extra_criteria: str):
+    def _prepare_criteria_string(self, criteria_string: str):
         criteria = []
-        for item in extra_criteria.split(';'):
+        for item in criteria_string.split(';'):
             _item = item.strip()
             prefix = ''
             suffix = ''
