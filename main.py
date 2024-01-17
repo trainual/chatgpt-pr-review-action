@@ -73,7 +73,6 @@ class GitHubChatGPTPullRequestReviewer:
 
         self.chatgpt_initial_instruction = f"""
             {self.openai_prompt.strip()}
-            {self.openai_default_criteria.strip()}
             {self._prepare_criteria_string(self.openai_default_criteria)}
             {self._prepare_criteria_string(self.openai_extra_criteria)}
 
