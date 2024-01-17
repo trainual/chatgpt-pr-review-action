@@ -16,6 +16,11 @@ class GitHubChatGPTPullRequestReviewer:
         self.gh_pr_id = os.environ.get("GITHUB_PR_ID")
 
         self.gh_token = os.environ.get("GITHUB_TOKEN")
+        print(
+            f">>>>> gh_token: {self.gh_token}",
+            self.gh_token
+        )
+
         self.gh_repo_name = os.getenv('GITHUB_REPOSITORY')
 
         self.gh_pr_url = (
