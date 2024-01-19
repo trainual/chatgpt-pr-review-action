@@ -15,9 +15,9 @@ class GitHubChatGPTPullRequestReviewer:
 
         self.gh_pr_id = os.environ.get("GITHUB_PR_ID")
 
-        self.comment_title = os.environ.get("COMMENT_TITLE", "default title")
+        self.comment_title = os.environ.get("INPUT_COMMENT_TITLE", "default title")
         print(f">>>>> comment_title: ", self.comment_title)
-        self.gh_token = os.environ.get("GITHUB_TOKEN")
+        self.gh_token = os.environ.get("INPUT_GITHUB_TOKEN")
         print(f">>>>> gh_token: ", self.gh_token)
 
         self.gh_repo_name = os.getenv('GITHUB_REPOSITORY')
