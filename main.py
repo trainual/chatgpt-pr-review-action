@@ -176,7 +176,7 @@ class GitHubChatGPTPullRequestReviewer:
 
         comment = (
             f"# {self.comment_title}\n\n"
-            f"# *{self.comment_note}*\n\n"
+            f"*{self.comment_note}*\n\n"
         )
         comment += '\n'.join(review)
         pull_request.create_issue_comment(comment)
