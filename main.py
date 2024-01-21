@@ -38,8 +38,7 @@ class GitHubChatGPTPullRequestReviewer:
             - performance improvement;
             - improvements from the software engineering perspective;
             - docstrings, when it applies;
-            - prefer explicit than implicit, for example, in python, avoid
-              importing using `*`, because we don't know what is being imported;
+            - prefer explicit than implicit, for example, in python, avoid importing using `*`, because we don't know what is being imported;
         """
         openai_prompt_default = f"""
             You are a GitHub PR reviewer bot, so you will receive a text that
@@ -71,11 +70,11 @@ class GitHubChatGPTPullRequestReviewer:
         openai.api_key = openai_api_key
 
         self.chatgpt_initial_instruction = f"""
-            {self.openai_prompt.strip()}
-            {self._prepare_criteria_string(self.openai_default_criteria)}
-            {self._prepare_criteria_string(self.openai_extra_criteria)}
+        {self.openai_prompt.strip()}
+        {self._prepare_criteria_string(self.openai_default_criteria)}
+        {self._prepare_criteria_string(self.openai_extra_criteria)}
 
-            {self.openai_prompt_footer.strip()}
+        {self.openai_prompt_footer.strip()}
         """.strip()
 
     def _prepare_criteria_string(self, criteria_string: str):
