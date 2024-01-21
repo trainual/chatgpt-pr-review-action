@@ -26,6 +26,12 @@ class GitHubChatGPTPullRequestReviewer:
         }
         self.gh_api = Github(self.gh_token)
 
+    def _get_arg(self, arg_name: str, default_value: str):
+        arg_value = os.environ.get(arg_name, default_value)
+        if not arg_value:
+            return default_value    
+        return arg_value
+
     def _config_openai(self):
         openai_model_default = "gpt-4-1106-preview"
         openai_temperature_default = 0.5
@@ -57,15 +63,15 @@ class GitHubChatGPTPullRequestReviewer:
 
         openai_api_key = os.environ.get("INPUT_OPENAI_API_KEY")
         os.environ["OPENAI_API_KEY"] = openai_api_key
-        self.openai_model = os.environ.get("INPUT_OPENAI_MODEL", openai_model_default)
-        self.openai_temperature = os.environ.get("INPUT_OPENAI_TEMPERATURE", openai_temperature_default)
-        self.openai_max_tokens = os.environ.get("INPUT_OPENAI_MAX_TOKENS", openai_max_tokens_default)
-        self.openai_default_criteria = os.environ.get("INPUT_OPENAI_DEFAULT_CRITERIA", openai_default_criteria_default)
-        self.openai_extra_criteria = os.environ.get("INPUT_OPENAI_EXTRA_CRITERIA", openai_extra_criteria_default)
-        self.openai_prompt = os.environ.get("INPUT_OPENAI_PROMPT", openai_prompt_default)
-        self.openai_prompt_footer = os.environ.get("INPUT_OPENAI_PROMPT_FOOTER", openai_prompt_footer_default)
-        self.comment_title = os.environ.get("INPUT_COMMENT_TITLE", comment_title_default)
-        self.comment_note = os.environ.get("INPUT_COMMENT_NOTE", comment_note_default)
+        self.openai_model = self._get_arg("INPUT_OPENAI_MODEL", openai_model_default)
+        self.openai_temperature = self._get_arg("INPUT_OPENAI_TEMPERATURE", openai_temperature_default)
+        self.openai_max_tokens = self._get_arg("INPUT_OPENAI_MAX_TOKENS", openai_max_tokens_default)
+        self.openai_default_criteria = self._get_arg("INPUT_OPENAI_DEFAULT_CRITERIA", openai_default_criteria_default)
+        self.openai_extra_criteria = self._get_arg("INPUT_OPENAI_EXTRA_CRITERIA", openai_extra_criteria_default)
+        self.openai_prompt = self._get_arg("INPUT_OPENAI_PROMPT", openai_prompt_default)
+        self.openai_prompt_footer = self._get_arg("INPUT_OPENAI_PROMPT_FOOTER", openai_prompt_footer_default)
+        self.comment_title = self._get_arg("INPUT_COMMENT_TITLE", comment_title_default)
+        self.comment_note = self._get_arg("INPUT_COMMENT_NOTE", comment_note)
 
         openai.api_key = openai_api_key
 
