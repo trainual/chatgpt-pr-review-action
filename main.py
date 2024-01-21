@@ -84,6 +84,8 @@ class GitHubChatGPTPullRequestReviewer:
             _item = item.strip()
             prefix = ''
             suffix = ''
+            if len(_item) == 0:
+                continue
             if not _item.startswith('-'):
                 prefix = '- '
             if not _item.endswith('\n'):
