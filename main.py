@@ -69,13 +69,14 @@ class GitHubChatGPTPullRequestReviewer:
 
         openai.api_key = openai_api_key
 
-        self.chatgpt_initial_instruction = f"""
-        {self.openai_prompt.strip()}
-        {self._prepare_criteria_string(self.openai_default_criteria)}
-        {self._prepare_criteria_string(self.openai_extra_criteria)}
-
-        {self.openai_prompt_footer.strip()}
-        """.strip()
+        prompt_parts = (
+            f"{self.openai_prompt.strip()}",
+            self._prepare_criteria_string(self.openai_default_criteria),
+            self._prepare_criteria_string(self.openai_extra_criteria),
+            "",
+            self.openai_prompt_footer.strip()
+        )
+        self.chatgpt_initial_instruction = '\n'.join(prompt_parts).strip()
 
     def _prepare_criteria_string(self, criteria_string: str):
         criteria = []
