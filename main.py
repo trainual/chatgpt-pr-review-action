@@ -71,7 +71,7 @@ class GitHubChatGPTPullRequestReviewer:
         self.openai_prompt = self._get_arg("INPUT_OPENAI_PROMPT", openai_prompt_default)
         self.openai_prompt_footer = self._get_arg("INPUT_OPENAI_PROMPT_FOOTER", openai_prompt_footer_default)
         self.comment_title = self._get_arg("INPUT_COMMENT_TITLE", comment_title_default)
-        self.comment_note = self._get_arg("INPUT_COMMENT_NOTE", comment_note)
+        self.comment_note = self._get_arg("INPUT_COMMENT_NOTE", comment_note_default)
 
         openai.api_key = openai_api_key
 
