@@ -71,8 +71,8 @@ class GitHubChatGPTPullRequestReviewer:
 
         prompt_parts = (
             f"{self.openai_prompt.strip()}",
-            self._prepare_criteria_string(self.openai_default_criteria),
-            self._prepare_criteria_string(self.openai_extra_criteria),
+            self._prepare_criteria_string(self.openai_default_criteria).strip(),
+            self._prepare_criteria_string(self.openai_extra_criteria).strip(),
             "",
             self.openai_prompt_footer.strip()
         )
