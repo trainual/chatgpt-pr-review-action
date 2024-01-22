@@ -161,6 +161,7 @@ class GitHubChatGPTPullRequestReviewer:
                 "Estimated number of tokens: ",
                 len(self.chatgpt_initial_instruction + message_diff) / 4
             )
+            print("Diff: ", message_diff)
 
             try:
                 # create a chat completion
