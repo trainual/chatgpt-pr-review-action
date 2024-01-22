@@ -193,10 +193,10 @@ class GitHubChatGPTPullRequestReviewer:
     def comment_review(self, review: list):
         repo = self.gh_api.get_repo(self.gh_repo_name)
         pull_request = repo.get_pull(int(self.gh_pr_id))
-        comment_parts = (
-            f"# {self.comment_title}\n"
+        comment_parts = [
+            f"# {self.comment_title}\n",
             f"*{self.comment_note}*\n"
-        )
+        ]
 
         if len(review) == 0:
             comment_parts.append("No violations found!")
