@@ -149,6 +149,7 @@ class GitHubChatGPTPullRequestReviewer:
         system_message = [
             {"role": "system", "content": self.chatgpt_initial_instruction},
         ]
+        print("Prompt: ", self.chatgpt_initial_instruction)
 
         results = []
 
@@ -160,7 +161,6 @@ class GitHubChatGPTPullRequestReviewer:
                 "Estimated number of tokens: ",
                 len(self.chatgpt_initial_instruction + message_diff) / 4
             )
-            print("Prompt: ", self.chatgpt_initial_instruction)
 
             try:
                 # create a chat completion
@@ -171,6 +171,9 @@ class GitHubChatGPTPullRequestReviewer:
                     messages=system_message + messages
                 )
                 response = chat_completion.choices[0].message.content
+
+                print("File: ", filename)
+                print("Response: ", response)
 
                 if self.skip_text in response:
                     continue
