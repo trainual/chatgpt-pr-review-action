@@ -66,7 +66,6 @@ runs:
     - ${{ inputs.openai_default_criteria }}
     - ${{ inputs.openai_extra_criteria }}
     - ${{ inputs.openai_prompt }}
-    - ${{ inputs.openai_prompt_footer }}
     - ${{ inputs.comment_title }}
     - ${{ inputs.comment_note }}
     - ${{ inputs.github_token }}

@@ -33,6 +33,7 @@ class GitHubChatGPTPullRequestReviewer:
         return arg_value
 
     def _config_openai(self):
+        skip_text = "No violations found"
         openai_model_default = "gpt-4-1106-preview"
         openai_temperature_default = 0.5
         openai_max_tokens_default = 2048
@@ -54,9 +55,9 @@ class GitHubChatGPTPullRequestReviewer:
             in order to improve the code or fix issues, using the following
             criteria for recommendation:
         """
-        openai_prompt_footer_default = f"""
-            Please, return your response in markdown format.
-            If the changes presented by the diff looks good, just say: "LGTM!"
+        openai_prompt_footer = f"""
+            If there are any violations, you should provide a provide a recommendation on how to fix it.
+            Do not comment on any rules for which there are no violations...do not even mention that they do not apply, just say "{skip_text}"
         """
         comment_title_default = 'ChatGPT Review'
         comment_note_default = 'NOTE: Generated using an ChatGPT...use program, so some comments here would not make sense.'
@@ -69,9 +70,11 @@ class GitHubChatGPTPullRequestReviewer:
         self.openai_default_criteria = self._get_arg("INPUT_OPENAI_DEFAULT_CRITERIA", openai_default_criteria_default)
         self.openai_extra_criteria = self._get_arg("INPUT_OPENAI_EXTRA_CRITERIA", openai_extra_criteria_default)
         self.openai_prompt = self._get_arg("INPUT_OPENAI_PROMPT", openai_prompt_default)
-        self.openai_prompt_footer = self._get_arg("INPUT_OPENAI_PROMPT_FOOTER", openai_prompt_footer_default)
         self.comment_title = self._get_arg("INPUT_COMMENT_TITLE", comment_title_default)
         self.comment_note = self._get_arg("INPUT_COMMENT_NOTE", comment_note_default)
+
+        self.skip_text = skip_text
+        self.openai_prompt_footer = openai_prompt_footer
 
         openai.api_key = openai_api_key
 
@@ -167,9 +170,14 @@ class GitHubChatGPTPullRequestReviewer:
                     max_tokens=int(self.openai_max_tokens or self.openai_max_tokens_default),
                     messages=system_message + messages
                 )
-                results.append(
-                    f"### {filename}\n\n{chat_completion.choices[0].message.content}\n\n---"
-                )
+                response = chat_completion.choices[0].message.content
+
+                if self.skip_text in response:
+                    continue
+                else:
+                    results.append(
+                        f"### {filename}\n\n{chat_completion.choices[0].message.content}\n\n---"
+                    )
             except Exception as e:
                 results.append(
                     f"### {filename}\nChatGPT was not able to review the file."
