@@ -57,7 +57,8 @@ class GitHubChatGPTPullRequestReviewer:
         """
         openai_prompt_footer = f"""
             If there are any violations, you should provide a provide a recommendation on how to fix it.
-            Do not comment on any rules for which there are no violations...do not even mention that they do not apply, just say "{skip_text}"
+        Do not comment on any rules for which there are no violations...do not even mention that they do not apply, just say "{skip_text}".
+        Similarly, if there are violations that are in the removed code, they do not need to be mentioned.
         """
         comment_title_default = 'ChatGPT Review'
         comment_note_default = 'NOTE: Generated using an ChatGPT...use program, so some comments here would not make sense.'
