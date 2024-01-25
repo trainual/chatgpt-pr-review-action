@@ -15,7 +15,6 @@ Include the following into your github actions step
           openai_model: 'gpt-4-1106-preview'  # optional
           openai_temperature: 0.5  # optional
           openai_max_tokens: 2048  # optional
-          openai_extra_criteria: |  # optional, use `;` for separate the criteria items
             - prefer readable variable name instead of short names like `k` and `v`, when apply;
             - verify `SOLID` principles design pattern violations, when apply;
           github_token: ${{ secrets.GITHUB_TOKEN }}  # required

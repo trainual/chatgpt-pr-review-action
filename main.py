@@ -33,31 +33,33 @@ class GitHubChatGPTPullRequestReviewer:
         return arg_value
 
     def _config_openai(self):
-        skip_text = "No violations found"
+        skip_text = '{ "violations": [] }'
         openai_model_default = "gpt-4-1106-preview"
         openai_temperature_default = 0.5
         openai_max_tokens_default = 2048
-        openai_extra_criteria_default = ""
-        openai_default_criteria_default = f"""
-            - best practice that would improve the changes;
-            - code style formatting;
-            - recommendation specific for that programming language;
-            - performance improvement;
-            - improvements from the software engineering perspective;
-            - docstrings, when it applies;
-            - prefer explicit than implicit, for example, in python, avoid importing using `*`, because we don't know what is being imported;
-        """
-        openai_prompt_default = f"""
-            You are a GitHub PR reviewer bot, so you will receive a text that
-            contains the diff from the PR with all the proposal changes and you
-            need to take a time to analyze and check if the diff looks good, or
-            if you see any way to improve the PR, you will return any suggestion
-            in order to improve the code or fix issues, using the following
-            criteria for recommendation:
+        openai_rules_json_array_default = """
+            [{
+              "rule": "Code should follow the SOLID design principles",
+            }, {
+              "rule": "All text, including code, should be free of obvious spelling errors.",
+              "good": [
+                "The quick brown fox jumps over the lazy dog.",
+                "card_template",
+                "receive",
+                "shippingLabel"
+              ],
+              "bad": [
+                "The quack brown fox jumps over the lazy dog.",
+                "card_templat",
+                "recieve",
+                "shipingLabel",
+                "shippingLable"
+              ]
+            }]
         """
         openai_prompt_footer = f"""
             If there are any violations, you should provide a provide a recommendation on how to fix it.
-        Do not comment on any rules for which there are no violations...do not even mention that they do not apply, just say "{skip_text}".
+        Do not comment on any rules for which there are no violations...do not even mention that they do not apply, just return "{skip_text}".
         Similarly, if there are violations that are in the removed code, they do not need to be mentioned.
         """
         comment_title_default = 'ChatGPT Review'
@@ -68,11 +70,26 @@ class GitHubChatGPTPullRequestReviewer:
         self.openai_model = self._get_arg("INPUT_OPENAI_MODEL", openai_model_default)
         self.openai_temperature = self._get_arg("INPUT_OPENAI_TEMPERATURE", openai_temperature_default)
         self.openai_max_tokens = self._get_arg("INPUT_OPENAI_MAX_TOKENS", openai_max_tokens_default)
-        self.openai_default_criteria = self._get_arg("INPUT_OPENAI_DEFAULT_CRITERIA", openai_default_criteria_default)
-        self.openai_extra_criteria = self._get_arg("INPUT_OPENAI_EXTRA_CRITERIA", openai_extra_criteria_default)
-        self.openai_prompt = self._get_arg("INPUT_OPENAI_PROMPT", openai_prompt_default)
+        self.openai_rules_json_array = self._get_arg("INPUT_OPENAI_RULES_JSON_ARRAY", openai_rules_json_array_default)
+        self.openai_prompt_extras = self._get_arg("INPUT_OPENAI_PROMPT_EXTRAS", '')
         self.comment_title = self._get_arg("INPUT_COMMENT_TITLE", comment_title_default)
         self.comment_note = self._get_arg("INPUT_COMMENT_NOTE", comment_note_default)
+
+        if self.openai_prompt_extras:
+            self.openai_prompt_extras += '\n'
+
+        self.openai_prompt = f"""
+            You are a GitHub pull request reviewer. Your job is to perform code reviews and provide actionable feedback on a set of rules. You will be provided
+            a diff file where a "+" indicates a new line and a "-" indicates a removed line. If there is no "+" or "-" at the start then the line is unchanged. 
+
+            {self.openai_prompt_extras}
+            A list of rules are provided below and will have the following format...
+            { "rule": "Rule description", "good": ["example 1", "example 2"], "bad": ["example 1", "example 2", "example 3"] }
+
+            In this format, "rule" is a description of the rule, "good" is a list of examples that follow the rule, and "bad" is a list of examples that violate the rule.
+
+            Here is the array of rules...
+        """
 
         self.skip_text = skip_text
         self.openai_prompt_footer = openai_prompt_footer
@@ -81,27 +98,11 @@ class GitHubChatGPTPullRequestReviewer:
 
         prompt_parts = (
             f"{self.openai_prompt.strip()}",
-            self._prepare_criteria_string(self.openai_default_criteria).strip(),
-            self._prepare_criteria_string(self.openai_extra_criteria).strip(),
+            self.openai_rules_json_array.strip(),
             "",
             self.openai_prompt_footer.strip()
         )
         self.chatgpt_initial_instruction = '\n'.join(prompt_parts).strip()
-
-    def _prepare_criteria_string(self, criteria_string: str):
-        criteria = []
-        for item in criteria_string.split(';'):
-            _item = item.strip()
-            prefix = ''
-            suffix = ''
-            if len(_item) == 0:
-                continue
-            if not _item.startswith('-'):
-                prefix = '- '
-            if not _item.endswith('\n'):
-                suffix = '\n'
-            criteria.append(f"{prefix}{_item}{suffix}")
-        return ''.join(criteria)
 
     def get_pr_content(self):
         response = requests.request("GET", self.gh_pr_url, headers=self.gh_headers)

@@ -22,9 +22,25 @@ jobs:
           openai_model: 'gpt-4-1106-preview'
           openai_temperature: 0.5
           openai_max_tokens: 2048
-          openai_extra_criteria: |  # optional, use `;` for separate the criteria items
-            - prefer readable variable name instead of short names like `k` and `v`, when apply;
-            - verify `SOLID` principles design pattern violations, when apply;
+          openai_rules_json_array: >-
+            [{
+              "rule": "Code should follow the SOLID design principles",
+            }, {
+              "rule": "All text, including code, should be free of obvious spelling errors.",
+              "good": [
+                "The quick brown fox jumps over the lazy dog.",
+                "card_template",
+                "receive",
+                "shippingLabel"
+              ],
+              "bad": [
+                "The quack brown fox jumps over the lazy dog.",
+                "card_templat",
+                "recieve",
+                "shipingLabel",
+                "shippingLable"
+              ]
+            }]
           github_token: ${{ secrets.GITHUB_TOKEN }}
           github_pr_id: ${{ github.event.number }}
 
