@@ -58,7 +58,7 @@ class GitHubChatGPTPullRequestReviewer:
             }]
         """
         openai_prompt_footer = f"""
-            If there are any violations, you should provide a provide a recommendation on how to fix it.
+
         Do not comment on any rules for which there are no violations...do not even mention that they do not apply, just return "{skip_text}".
         Similarly, if there are violations that are in the removed code, they do not need to be mentioned.
         """
@@ -81,9 +81,16 @@ class GitHubChatGPTPullRequestReviewer:
         rule_format = '{ "rule": "Rule description", "good": ["example 1", "example 2"], "bad": ["example 1", "example 2", "example 3"] }'
         openai_prompt = f"""
             You are a GitHub pull request reviewer. Your job is to perform code reviews and provide actionable feedback on a set of rules. You will be provided
-            a diff file where a "+" indicates a new line and a "-" indicates a removed line. If there is no "+" or "-" at the start then the line is unchanged. 
+            a diff file where a "+" indicates a new line and a "-" indicates a removed line. If there is no "+" or "-" at the start then the line is unchanged.
+            If there are no violations for any rules, then you should return just "{skip_text}" so that a script can detect that there are no violations.
+            If there are violations, then you should return a list of the violations in the following, human-readable format...
+            - Recommendation 1
+            - Recommendation 2
+            - Recommendation 3
+              
 
             {self.openai_prompt_extras}
+
             A list of rules are provided below and will have the following format...
             {rule_format}
 
