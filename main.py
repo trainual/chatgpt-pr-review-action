@@ -78,13 +78,14 @@ class GitHubChatGPTPullRequestReviewer:
         if self.openai_prompt_extras:
             self.openai_prompt_extras += '\n'
 
-        self.openai_prompt = f"""
+        rule_format = '{ "rule": "Rule description", "good": ["example 1", "example 2"], "bad": ["example 1", "example 2", "example 3"] }'
+        openai_prompt = f"""
             You are a GitHub pull request reviewer. Your job is to perform code reviews and provide actionable feedback on a set of rules. You will be provided
             a diff file where a "+" indicates a new line and a "-" indicates a removed line. If there is no "+" or "-" at the start then the line is unchanged. 
 
             {self.openai_prompt_extras}
             A list of rules are provided below and will have the following format...
-            { "rule": "Rule description", "good": ["example 1", "example 2"], "bad": ["example 1", "example 2", "example 3"] }
+            {rule_format}
 
             In this format, "rule" is a description of the rule, "good" is a list of examples that follow the rule, and "bad" is a list of examples that violate the rule.
 
@@ -97,7 +98,7 @@ class GitHubChatGPTPullRequestReviewer:
         openai.api_key = openai_api_key
 
         prompt_parts = (
-            f"{self.openai_prompt.strip()}",
+            f"{openai_prompt.strip()}",
             self.openai_rules_json_array.strip(),
             "",
             self.openai_prompt_footer.strip()
