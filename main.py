@@ -79,11 +79,10 @@ class GitHubChatGPTPullRequestReviewer:
             You are a GitHub pull request reviewer. Your job is to perform code reviews and provide actionable feedback on a set of rules. You will be provided
             a diff file where a "+" indicates a new line and a "-" indicates a removed line. If there is no "+" or "-" at the start then the line is unchanged.
             If there are no violations for any rules, then you should return just "{skip_text}" so that a script can detect that there are no violations.
-            If there are violations, then you should return a list of the violations in the following, human-readable format...
-            - Recommendation 1
-            - Recommendation 2
-            - Recommendation 3
-              
+            If there are violations, then you should return a list of the violations with where the violation occurred and a corresponding suggestion for how to fix the issue. 
+            Here is a sample of what the output should look like...
+            - The code `const x = "helo"` contains a spelling error. It should be `const x = "hello"`.
+            - The function `doEverything()` violates the single-responsibility principal and should be split into multiple functions.
 
             {self.openai_prompt_extras}
 
